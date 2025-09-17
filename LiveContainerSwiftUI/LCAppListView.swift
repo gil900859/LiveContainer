@@ -961,9 +961,7 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
     func jitLaunch(withPID pid: Int) async {
         await MainActor.run {
             if let url = URL(string: "stikjit://enable-jit?pid=\(pid)") {
-                if UIApplication.shared.canOpenURL(url) {
-                    UIApplication.shared.open(url)
-                }
+                UIApplication.shared.open(url)
             }
         }
     }
@@ -972,9 +970,7 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
         await MainActor.run {
             let encoded = script.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
             if let url = URL(string: "stikjit://enable-jit?pid=\(pid)&script-data=\(encoded)") {
-                if UIApplication.shared.canOpenURL(url) {
-                    UIApplication.shared.open(url)
-                }
+                UIApplication.shared.open(url)
             }
         }
     }
