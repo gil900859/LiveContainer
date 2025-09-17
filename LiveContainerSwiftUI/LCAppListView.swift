@@ -932,10 +932,10 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
     }
     
     func jitLaunch() async {
-        await jitLaunch(withScript: nil)
+        await jitLaunch(withScript: "")
     }
     
-    func jitLaunch(withScript script: String?) async {
+    func jitLaunch(withScript script: String) async {
         await MainActor.run {
             jitLog = ""
         }
