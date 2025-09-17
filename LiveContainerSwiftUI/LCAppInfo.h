@@ -34,6 +34,7 @@ typedef NS_ENUM(NSInteger, LCOrientationLock){
 @property bool autoSaveDisabled;
 @property bool dontSign;
 @property bool spoofSDKVersion;
+@property (nonatomic, strong) NSString* JITLaunchScriptJs;
 @property NSDate* lastLaunched;
 @property NSDate* installationDate;
 

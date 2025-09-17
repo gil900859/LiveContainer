@@ -14,6 +14,8 @@ protocol LCAppBannerDelegate {
     func removeApp(app: LCAppModel)
     func installMdm(data: Data)
     func openNavigationView(view: AnyView)
+    func jitLaunch() async
+    func jitLaunch(withScript script: String?) async
 }
 
 struct LCAppBanner : View {
@@ -309,7 +311,14 @@ struct LCAppBanner : View {
         }
 
         do {
-            try await model.runApp(multitask: multitask)
+            // If the app requires JIT and we have a script, use the delegate to handle JIT launch with script
+            if (appInfo.isJITNeeded || appInfo.is32bit), 
+               let scriptData = model.JITLaunchScriptJs, 
+               !scriptData.isEmpty {
+                await delegate.jitLaunch(withScript: scriptData)
+            } else {
+                try await model.runApp(multitask: multitask)
+            }
         } catch {
             errorInfo = error.localizedDescription
             errorShow = true

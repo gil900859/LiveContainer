@@ -932,17 +932,20 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
     }
     
     func jitLaunch() async {
+        await jitLaunch(withScript: nil)
+    }
+    
+    func jitLaunch(withScript script: String?) async {
         await MainActor.run {
             jitLog = ""
         }
         let enableJITTask = Task {
-            let _ = await LCUtils.askForJIT { newMsg in
+            let _ = await LCUtils.askForJIT(withScript: script) { newMsg in
                 Task { await MainActor.run {
                     self.jitLog += "\(newMsg)\n"
                 }}
             }
-            guard
-                  let _ = JITEnablerType(rawValue: LCUtils.appGroupUserDefault.integer(forKey: "LCJITEnablerType")) else {
+            guard let _ = JITEnablerType(rawValue: LCUtils.appGroupUserDefault.integer(forKey: "LCJITEnablerType")) else {
                 return
             }
         }
@@ -952,7 +955,6 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
             return
         }
         LCUtils.launchToGuestApp()
-
     }
     
     func showRunWhenMultitaskAlert() async -> Bool? {

@@ -44,7 +44,8 @@ uint32_t dyld_get_sdk_version(const struct mach_header* mh);
                 @"LCOrientationLock",
                 @"cachedColor",
                 @"LCContainers",
-                @"hideLiveContainer"
+                @"hideLiveContainer",
+                @"JITLaunchScriptJs"
             ];
             for(NSString* key in lcAppInfoKeys) {
                 _info[key] = _infoPlist[key];
@@ -613,6 +614,19 @@ uint32_t dyld_get_sdk_version(const struct mach_header* mh);
     _info[@"dontSign"] = [NSNumber numberWithBool:dontSign];
     [self save];
     
+}
+
+- (NSString *)JITLaunchScriptJs {
+    return _info[@"JITLaunchScriptJs"];
+}
+
+- (void)setJITLaunchScriptJs:(NSString *)JITLaunchScriptJs {
+    if (JITLaunchScriptJs.length > 0) {
+        _info[@"JITLaunchScriptJs"] = JITLaunchScriptJs;
+    } else {
+        [_info removeObjectForKey:@"JITLaunchScriptJs"];
+    }
+    if (!_autoSaveDisabled) [self save];
 }
 
 - (bool)spoofSDKVersion {

@@ -4,6 +4,7 @@ protocol LCAppModelDelegate {
     func closeNavigationView()
     func changeAppVisibility(app : LCAppModel)
     func jitLaunch() async
+    func jitLaunch(withScript script: String) async
     func showRunWhenMultitaskAlert() async -> Bool?
 }
 
@@ -90,6 +91,12 @@ class LCAppModel: ObservableObject, Hashable {
         }
     }
     
+    @Published var JITLaunchScriptJs: String? {
+        didSet {
+            appInfo.JITLaunchScriptJs = JITLaunchScriptJs
+        }
+    }
+    
     @Published var uiSpoofSDKVersion : Bool {
         didSet {
             appInfo.spoofSDKVersion = uiSpoofSDKVersion
@@ -126,6 +133,7 @@ class LCAppModel: ObservableObject, Hashable {
         self.uiTweakLoaderInjectFailed = appInfo.info()["LCTweakLoaderCantInject"] as? Bool ?? false
         self.uiDontLoadTweakLoader = appInfo.dontLoadTweakLoader
         self.uiDontSign = appInfo.dontSign
+        self.JITLaunchScriptJs = appInfo.JITLaunchScriptJs
         self.uiSpoofSDKVersion = appInfo.spoofSDKVersion
         
         self.uiIs32bit = appInfo.is32bit
@@ -228,7 +236,12 @@ class LCAppModel: ObservableObject, Hashable {
         UserDefaults.standard.set(uiSelectedContainer?.folderName, forKey: "selectedContainer")
 
         if appInfo.isJITNeeded || appInfo.is32bit {
-            await delegate?.jitLaunch()
+            // Pass the JIT script data to the delegate if available
+            if let scriptData = JITLaunchScriptJs, !scriptData.isEmpty {
+                await delegate?.jitLaunch(withScript: scriptData)
+            } else {
+                await delegate?.jitLaunch()
+            }
         } else if multitask, #available(iOS 16.0, *) {
             try await LCUtils.launchMultitaskGuestApp(appInfo.displayName())
         } else {
