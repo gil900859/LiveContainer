@@ -957,6 +957,28 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
         LCUtils.launchToGuestApp()
     }
     
+    // New overloads: perform JIT enable via stikjit URL using the PID from LiveProcess
+    func jitLaunch(withPID pid: Int) async {
+        await MainActor.run {
+            if let url = URL(string: "stikjit://enable-jit?pid=\(pid)") {
+                if UIApplication.shared.canOpenURL(url) {
+                    UIApplication.shared.open(url)
+                }
+            }
+        }
+    }
+    
+    func jitLaunch(withPID pid: Int, withScript script: String) async {
+        await MainActor.run {
+            let encoded = script.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+            if let url = URL(string: "stikjit://enable-jit?pid=\(pid)&script-data=\(encoded)") {
+                if UIApplication.shared.canOpenURL(url) {
+                    UIApplication.shared.open(url)
+                }
+            }
+        }
+    }
+    
     func showRunWhenMultitaskAlert() async -> Bool? {
         return await runWhenMultitaskAlert.open()
     }

@@ -5,6 +5,8 @@ protocol LCAppModelDelegate {
     func changeAppVisibility(app : LCAppModel)
     func jitLaunch() async
     func jitLaunch(withScript script: String) async
+    func jitLaunch(withPID pid: Int) async
+    func jitLaunch(withPID pid: Int, withScript script: String) async
     func showRunWhenMultitaskAlert() async -> Bool?
 }
 
@@ -160,9 +162,6 @@ class LCAppModel: ObservableObject, Hashable {
         }
         
         var multitask = multitask
-        if(appInfo.isJITNeeded && multitask) {
-            multitask = false
-        }
         
         if multitask && !uiIsShared {
             throw "It's not possible to multitask with private apps."
@@ -236,11 +235,35 @@ class LCAppModel: ObservableObject, Hashable {
         UserDefaults.standard.set(uiSelectedContainer?.folderName, forKey: "selectedContainer")
 
         if appInfo.isJITNeeded || appInfo.is32bit {
-            // Pass the JIT script data to the delegate if available
-            if let scriptData = jitLaunchScriptJs, !scriptData.isEmpty {
-                await delegate?.jitLaunch(withScript: scriptData)
+            // For JIT apps launched in multitask, first open in LiveProcess, then enable JIT by PID
+            if multitask, #available(iOS 16.0, *) {
+                try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                    LCUtils.launchMultitaskGuestApp(appInfo.displayName()) { pidNumber, error in
+                        if let error {
+                            continuation.resume(throwing: error)
+                            return
+                        }
+                        guard let pidNumber = pidNumber else {
+                            continuation.resume(throwing: "Failed to obtain PID from LiveProcess")
+                            return
+                        }
+                        Task {
+                            if let scriptData = self.jitLaunchScriptJs, !scriptData.isEmpty {
+                                await self.delegate?.jitLaunch(withPID: pidNumber.intValue, withScript: scriptData)
+                            } else {
+                                await self.delegate?.jitLaunch(withPID: pidNumber.intValue)
+                            }
+                            continuation.resume()
+                        }
+                    }
+                }
             } else {
-                await delegate?.jitLaunch()
+                // Non-multitask JIT flow remains unchanged
+                if let scriptData = jitLaunchScriptJs, !scriptData.isEmpty {
+                    await delegate?.jitLaunch(withScript: scriptData)
+                } else {
+                    await delegate?.jitLaunch()
+                }
             }
         } else if multitask, #available(iOS 16.0, *) {
             try await LCUtils.launchMultitaskGuestApp(appInfo.displayName())

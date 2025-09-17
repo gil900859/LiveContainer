@@ -344,9 +344,15 @@ void UIKitFixesInit(void) {
                 UIPasteboard.generalPasteboard.string = error.localizedDescription;
             }]];
             [self presentViewController:alert animated:YES completion:nil];
+            if (self.pidAvailableHandler) {
+                self.pidAvailableHandler(nil, error);
+            }
         } else {
             self.pid = vc.pid;
             [self updateOriginalFrame];
+            if (self.pidAvailableHandler) {
+                self.pidAvailableHandler(@(self.pid), nil);
+            }
         }
     });
 }
