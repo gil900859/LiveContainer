@@ -313,7 +313,7 @@ struct LCAppBanner : View {
         do {
             // If the app requires JIT and we have a script, use the delegate to handle JIT launch with script
             if (appInfo.isJITNeeded || appInfo.is32bit), 
-               let scriptData = model.JITLaunchScriptJs, 
+               let scriptData = model.jitLaunchScriptJs, 
                !scriptData.isEmpty {
                 await delegate.jitLaunch(withScript: scriptData)
             } else {

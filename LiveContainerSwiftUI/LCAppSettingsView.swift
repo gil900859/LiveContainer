@@ -143,7 +143,7 @@ struct LCAppSettingsView: View {
                     HStack {
                         Text("JIT Launch Script")
                         Spacer()
-                        if let base64String = model.JITLaunchScriptJs, !base64String.isEmpty {
+                        if let base64String = model.jitLaunchScriptJs, !base64String.isEmpty {
                             // Show a generic name since we're not storing the filename
                             Text("Script Loaded")
                                 .lineLimit(1)
@@ -151,7 +151,7 @@ struct LCAppSettingsView: View {
                                 .foregroundColor(.primary)
                             
                             Button(action: {
-                                model.JITLaunchScriptJs = nil
+                                model.jitLaunchScriptJs = nil
                             }) {
                                 Image(systemName: "xmark.circle.fill")
                                     .foregroundColor(.gray)
@@ -169,7 +169,7 @@ struct LCAppSettingsView: View {
                                 do {
                                     let data = try Data(contentsOf: url)
                                     // Store the Base64-encoded string of the file content
-                                    model.JITLaunchScriptJs = data.base64EncodedString()
+                                    model.jitLaunchScriptJs = data.base64EncodedString()
                                 } catch {
                                     errorInfo = "Failed to read file: \(error.localizedDescription)"
                                     errorShow = true

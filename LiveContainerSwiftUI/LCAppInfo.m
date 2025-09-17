@@ -45,7 +45,7 @@ uint32_t dyld_get_sdk_version(const struct mach_header* mh);
                 @"cachedColor",
                 @"LCContainers",
                 @"hideLiveContainer",
-                @"JITLaunchScriptJs"
+                @"jitLaunchScriptJs"
             ];
             for(NSString* key in lcAppInfoKeys) {
                 _info[key] = _infoPlist[key];
@@ -616,15 +616,15 @@ uint32_t dyld_get_sdk_version(const struct mach_header* mh);
     
 }
 
-- (NSString *)JITLaunchScriptJs {
-    return _info[@"JITLaunchScriptJs"];
+- (NSString *)jitLaunchScriptJs {
+    return _info[@"jitLaunchScriptJs"];
 }
 
-- (void)setJITLaunchScriptJs:(NSString *)JITLaunchScriptJs {
-    if (JITLaunchScriptJs.length > 0) {
-        _info[@"JITLaunchScriptJs"] = JITLaunchScriptJs;
+- (void)setjitLaunchScriptJs:(NSString *)jitLaunchScriptJs {
+    if (jitLaunchScriptJs.length > 0) {
+        _info[@"jitLaunchScriptJs"] = jitLaunchScriptJs;
     } else {
-        [_info removeObjectForKey:@"JITLaunchScriptJs"];
+        [_info removeObjectForKey:@"jitLaunchScriptJs"];
     }
     if (!_autoSaveDisabled) [self save];
 }

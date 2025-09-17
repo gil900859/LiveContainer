@@ -91,9 +91,9 @@ class LCAppModel: ObservableObject, Hashable {
         }
     }
     
-    @Published var JITLaunchScriptJs: String? {
+    @Published var jitLaunchScriptJs: String? {
         didSet {
-            appInfo.JITLaunchScriptJs = JITLaunchScriptJs
+            appInfo.jitLaunchScriptJs = jitLaunchScriptJs
         }
     }
     
@@ -133,7 +133,7 @@ class LCAppModel: ObservableObject, Hashable {
         self.uiTweakLoaderInjectFailed = appInfo.info()["LCTweakLoaderCantInject"] as? Bool ?? false
         self.uiDontLoadTweakLoader = appInfo.dontLoadTweakLoader
         self.uiDontSign = appInfo.dontSign
-        self.JITLaunchScriptJs = appInfo.JITLaunchScriptJs
+        self.jitLaunchScriptJs = appInfo.jitLaunchScriptJs
         self.uiSpoofSDKVersion = appInfo.spoofSDKVersion
         
         self.uiIs32bit = appInfo.is32bit
@@ -237,7 +237,7 @@ class LCAppModel: ObservableObject, Hashable {
 
         if appInfo.isJITNeeded || appInfo.is32bit {
             // Pass the JIT script data to the delegate if available
-            if let scriptData = JITLaunchScriptJs, !scriptData.isEmpty {
+            if let scriptData = jitLaunchScriptJs, !scriptData.isEmpty {
                 await delegate?.jitLaunch(withScript: scriptData)
             } else {
                 await delegate?.jitLaunch()
