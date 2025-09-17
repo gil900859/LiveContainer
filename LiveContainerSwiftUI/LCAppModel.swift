@@ -238,7 +238,7 @@ class LCAppModel: ObservableObject, Hashable {
             // For JIT apps launched in multitask, first open in LiveProcess, then enable JIT by PID
             if multitask, #available(iOS 16.0, *) {
                 try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-                    LCUtils.launchMultitaskGuestApp(appInfo.displayName()) { pidNumber, error in
+                    LCUtils.launchMultitaskGuestAppWithPIDCallback(appInfo.displayName()) { pidNumber, error in
                         if let error {
                             continuation.resume(throwing: error)
                             return
