@@ -14,8 +14,6 @@ protocol LCAppBannerDelegate {
     func removeApp(app: LCAppModel)
     func installMdm(data: Data)
     func openNavigationView(view: AnyView)
-    func jitLaunch() async
-    func jitLaunch(withScript script: String?) async
 }
 
 struct LCAppBanner : View {
