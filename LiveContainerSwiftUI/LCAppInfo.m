@@ -620,7 +620,7 @@ uint32_t dyld_get_sdk_version(const struct mach_header* mh);
     return _info[@"jitLaunchScriptJs"];
 }
 
-- (void)setjitLaunchScriptJs:(NSString *)jitLaunchScriptJs {
+- (void)setJitLaunchScriptJs:(NSString *)jitLaunchScriptJs {
     if (jitLaunchScriptJs.length > 0) {
         _info[@"jitLaunchScriptJs"] = jitLaunchScriptJs;
     } else {
